@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<!-- saved from url=(0069)file:///Users/dieter.cafmeyer/Downloads/kraken-widget-parks-only.html -->
+<html lang="nl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NZXT Kraken Widget</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=DM+Mono:wght@300;400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 480px;
+    height: 480px;
+    overflow: hidden;
+    background: #000;
+  }
+
+  #canvas {
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    background: #000;
+  }
+
+  /* RGB spinning border ring */
+  #rgb-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    z-index: 0;
+  }
+  #rgb-ring::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: conic-gradient(
+      #ff0080 0deg, #ff4400 45deg, #ffff00 90deg, #00ff80 135deg,
+      #00ffff 180deg, #0080ff 225deg, #8000ff 270deg, #ff0080 360deg
+    );
+    animation: spin 3s linear infinite;
+  }
+  #rgb-ring::after {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    background: #000;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #display {
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    z-index: 2;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 35%, #080820 0%, #020208 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #display::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,200,255,0.012) 3px, rgba(0,200,255,0.012) 4px);
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  .grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(0,200,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,255,0.035) 1px, transparent 1px);
+    background-size: 32px 32px;
+    animation: gridpulse 5s ease-in-out infinite;
+  }
+  @keyframes gridpulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+
+  .corner { position: absolute; width: 20px; height: 20px; }
+  .corner.tl { top:52px; left:82px; border-top:1px solid rgba(0,255,255,.35); border-left:1px solid rgba(0,255,255,.35); }
+  .corner.tr { top:52px; right:82px; border-top:1px solid rgba(0,255,255,.35); border-right:1px solid rgba(0,255,255,.35); }
+  .corner.bl { bottom:52px; left:82px; border-bottom:1px solid rgba(0,255,255,.35); border-left:1px solid rgba(0,255,255,.35); }
+  .corner.br { bottom:52px; right:82px; border-bottom:1px solid rgba(0,255,255,.35); border-right:1px solid rgba(0,255,255,.35); }
+
+  /* ===== SCREENS ===== */
+  .screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity .7s ease; pointer-events: none;
+  }
+  .screen.active { opacity: 1; }
+
+  /* ===== PARK ===== */
+  .park-tag { font-family:'DM Mono',monospace; font-size:12px; font-weight:400; letter-spacing:3px; color:rgba(0,255,255,.45); margin-bottom:5px; text-transform:uppercase; }
+  .park-name {
+    font-family:'Inter',sans-serif; font-size:26px; font-weight:700; text-align:center; color:#fff;
+    text-shadow:0 0 18px rgba(0,255,255,.9), 0 0 40px rgba(0,255,255,.35);
+    line-height:1.2; margin-bottom:12px; max-width:300px; letter-spacing:-.5px;
+  }
+
+  .rides { width:300px; margin-top:8px; }
+  .ride-row { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+  .ride-n { font-family:'Inter',sans-serif; font-size:15px; font-weight:400; color:rgba(255,255,255,.6); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:225px; }
+  .ride-w { font-family:'DM Mono',monospace; font-size:16px; font-weight:500; min-width:42px; text-align:right; }
+
+  .c-green  { color:#00ff80; text-shadow:0 0 8px #00ff80; }
+  .c-yellow { color:#ffdd00; text-shadow:0 0 8px #ffdd00; }
+  .c-orange { color:#ff8800; text-shadow:0 0 8px #ff8800; }
+  .c-red    { color:#ff2244; text-shadow:0 0 8px #ff2244; }
+
+
+  /* ===== LOADING ===== */
+  #loading { position:absolute; inset:0; border-radius:50%; background:#000; z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity .8s; }
+  .load-brand { font-family:'Inter',sans-serif; font-size:13px; font-weight:600; letter-spacing:8px; color:rgba(0,255,255,.5); margin-bottom:22px; }
+  .load-spin { width:44px; height:44px; border:2px solid rgba(0,255,255,.1); border-top-color:#00ffff; border-radius:50%; animation:spin .8s linear infinite; }
+  .load-txt { margin-top:14px; font-family:'DM Mono',monospace; font-size:10px; font-weight:400; color:rgba(0,255,255,.4); letter-spacing:3px; }
+</style>
+</head>
+<body>
+<div id="canvas">
+  <div id="rgb-ring"></div>
+  <div id="display">
+    <div class="grid"></div>
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
+
+    <div id="loading" style="opacity: 0; display: none;">
+      <div class="load-brand">NZXT</div>
+      <div class="load-spin"></div>
+      <div class="load-txt">OPHALEN...</div>
+    </div>
+
+    <!-- PARK -->
+    <div class="screen active" id="s-park">
+      <div class="park-tag">WACHTTIJDEN • LIVE</div>
+      <div class="park-name" id="park-name">Efteling</div>
+      <div class="rides" id="rides-list"><div class="ride-row"><span class="ride-n">Crush's Coaster</span><span class="ride-w c-red">90'</span></div><div class="ride-row"><span class="ride-n">Spider-Man W.E.B. Adventure</span><span class="ride-w c-red">65'</span></div><div class="ride-row"><span class="ride-n">RC Racer</span><span class="ride-w c-orange">55'</span></div><div class="ride-row"><span class="ride-n">The Twilight Zone Tower of Terror</span><span class="ride-w c-orange">55'</span></div><div class="ride-row"><span class="ride-n">Toy Soldiers Parachute Drop</span><span class="ride-w c-orange">50'</span></div></div>
+    </div>
+
+
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG — themeparks.wiki API
+// Destination IDs — de API geeft children terug waaruit we
+// het echte park-level entity halen voor correcte attracties
+// ============================================================
+const PARKS = [
+  { id: 'dae968d5-630d-44a5-ad08-a3f7d5af6a95', name: 'Disneyland Paris\nMagic Kingdom'       },
+  { id: 'ca888437-ebb4-4d50-aed2-d227f7096968', name: 'Disneyland Paris\nWalt Disney Studios'  },
+  { id: 'e8d0207f-da8a-4048-bec8-117aa946b2c2', name: 'Efteling'      },
+  { id: '63cf2fd0-cd01-4f6b-9ad3-48b7d51dc7f2', name: 'Europa-Park'   },
+  { id: '1f6f6a5e-61a7-4ad4-b89e-da9e6b2b3d79', name: 'Phantasialand' },
+];
+
+const SCREEN_ORDER    = ['park'];
+const SCREEN_DURATION = { park: 8000 };
+const PARK_REFRESH    = 120000;
+
+let parksData   = [];
+let currentPark = 0;
+let currentScr  = 0;
+let scrTimer    = null;
+
+// ============================================================
+// PARKS — themeparks.wiki
+// Haal eerst /children op om het echte park-entity te vinden,
+// dan /live enkel op dat park zodat we geen mix van parken krijgen
+// ============================================================
+async function fetchPark(cfg) {
+  try {
+    // Stap 1: haal children op om park-level entity ID te vinden
+    const cr = await fetch(`https://api.themeparks.wiki/v1/entity/${cfg.id}/children`);
+    if (!cr.ok) throw new Error(cr.status);
+    const children = await cr.json();
+
+    // Zoek het child entity van type PARK (of gebruik de destination ID zelf als er geen children zijn)
+    const parkEntity = (children.children || []).find(c => c.entityType === 'PARK');
+    const parkId = parkEntity ? parkEntity.id : cfg.id;
+
+    // Stap 2: haal live data op voor dit specifieke park
+    const r = await fetch(`https://api.themeparks.wiki/v1/entity/${parkId}/live`);
+    if (!r.ok) throw new Error(r.status);
+    const json = await r.json();
+
+    const rides = (json.liveData || [])
+      .filter(e =>
+        e.entityType === 'ATTRACTION' &&
+        e.status !== 'CLOSED' &&
+        e.status !== 'REFURBISHMENT' &&
+        e.queue?.STANDBY?.waitTime != null &&
+        e.queue.STANDBY.waitTime >= 0
+      )
+      .map(e => ({ name: e.name, wait: e.queue.STANDBY.waitTime }))
+      .sort((a, b) => b.wait - a.wait);
+
+    if (rides.length === 0) return { name: cfg.name, rides: [], closed: true };
+    return { name: cfg.name, rides };
+  } catch(e) {
+    console.warn('Fout bij ophalen park:', cfg.name, e);
+    return { name: cfg.name, rides: [], error: true };
+  }
+}
+
+async function loadParks() {
+  const results = await Promise.all(PARKS.map(fetchPark));
+  const validParks = results.filter(p => !p.error);
+
+  if (validParks.length > 0) {
+    parksData = validParks;
+    if (currentPark >= parksData.length) currentPark = 0;
+  } else {
+    parksData = [{ name: 'ALLE PARKEN\nGESLOTEN', rides: [], closed: true }];
+    currentPark = 0;
+  }
+  renderPark(currentPark);
+}
+
+function waitColor(w) {
+  if (w<20) return 'c-green';
+  if (w<40) return 'c-yellow';
+  if (w<65) return 'c-orange';
+  return 'c-red';
+}
+
+function renderPark(idx) {
+  if (!parksData.length) return;
+  currentPark = ((idx%parksData.length)+parksData.length)%parksData.length;
+  const p = parksData[currentPark];
+
+  document.getElementById('park-name').innerHTML = p.name.replace('\n','<br>');
+
+  const list = document.getElementById('rides-list');
+  list.innerHTML = '';
+
+  if (p.closed) {
+    const row = document.createElement('div');
+    row.style.cssText = 'font-family:"DM Mono",monospace;font-size:13px;color:rgba(0,255,255,.3);text-align:center;padding:24px 0;letter-spacing:3px;';
+    row.textContent = 'GESLOTEN';
+    list.appendChild(row);
+    return;
+  }
+
+  p.rides.slice(0,5).forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'ride-row';
+    row.innerHTML = `<span class="ride-n">${r.name}</span><span class="ride-w ${waitColor(r.wait)}">${r.wait}'</span>`;
+    list.appendChild(row);
+  });
+}
+
+// ============================================================
+// SCREEN ROTATION
+// ============================================================
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s-'+name).classList.add('active');
+}
+
+function nextScreen() {
+  currentScr = (currentScr+1)%SCREEN_ORDER.length;
+  const name = SCREEN_ORDER[currentScr];
+  showScreen(name);
+  if (name==='park') {
+    currentPark = (currentPark+1)%Math.max(parksData.length,1);
+    renderPark(currentPark);
+  }
+  clearTimeout(scrTimer);
+  scrTimer = setTimeout(nextScreen, SCREEN_DURATION[name]);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+async function init() {
+  await loadParks();
+
+  const ld = document.getElementById('loading');
+  ld.style.opacity='0';
+  setTimeout(()=>ld.style.display='none', 800);
+
+  showScreen('park');
+  scrTimer = setTimeout(nextScreen, SCREEN_DURATION['park']);
+  setInterval(loadParks, PARK_REFRESH);
+}
+
+init();
+</script>
+
+
+</body></html>
