@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0069)file:///Users/dieter.cafmeyer/Downloads/kraken-widget-parks-only.html -->
+<!-- saved from url=(0071)file:///Users/dieter.cafmeyer/Downloads/kraken-widget-parks-only_1.html -->
 <html lang="nl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -137,7 +137,7 @@
     <!-- PARK -->
     <div class="screen active" id="s-park">
       <div class="park-tag">WACHTTIJDEN • LIVE</div>
-      <div class="park-name" id="park-name">Efteling</div>
+      <div class="park-name" id="park-name">Disneyland Paris<br>Disney Adventure World</div>
       <div class="rides" id="rides-list"><div class="ride-row"><span class="ride-n">Crush's Coaster</span><span class="ride-w c-red">90'</span></div><div class="ride-row"><span class="ride-n">Spider-Man W.E.B. Adventure</span><span class="ride-w c-red">65'</span></div><div class="ride-row"><span class="ride-n">RC Racer</span><span class="ride-w c-orange">55'</span></div><div class="ride-row"><span class="ride-n">The Twilight Zone Tower of Terror</span><span class="ride-w c-orange">55'</span></div><div class="ride-row"><span class="ride-n">Toy Soldiers Parachute Drop</span><span class="ride-w c-orange">50'</span></div></div>
     </div>
 
@@ -148,15 +148,14 @@
 <script>
 // ============================================================
 // CONFIG — themeparks.wiki API
-// Destination IDs — de API geeft children terug waaruit we
-// het echte park-level entity halen voor correcte attracties
+// Destination IDs + display namen
 // ============================================================
 const PARKS = [
-  { id: 'dae968d5-630d-44a5-ad08-a3f7d5af6a95', name: 'Disneyland Paris\nMagic Kingdom'       },
-  { id: 'ca888437-ebb4-4d50-aed2-d227f7096968', name: 'Disneyland Paris\nWalt Disney Studios'  },
-  { id: 'e8d0207f-da8a-4048-bec8-117aa946b2c2', name: 'Efteling'      },
-  { id: '63cf2fd0-cd01-4f6b-9ad3-48b7d51dc7f2', name: 'Europa-Park'   },
-  { id: '1f6f6a5e-61a7-4ad4-b89e-da9e6b2b3d79', name: 'Phantasialand' },
+  { id: 'dae968d5-630d-44a5-ad08-a3f7d5af6a95', name: 'Disneyland Paris\nDisneyland Park',    match: 'Disneyland Park'      },
+  { id: 'ca888437-ebb4-4d50-aed2-d227f7096968', name: 'Disneyland Paris\nDisney Adventure World', match: 'Disney Adventure World' },
+  { id: 'e8d0207f-da8a-4048-bec8-117aa946b2c2', name: 'Efteling',       match: null },
+  { id: '63cf2fd0-cd01-4f6b-9ad3-48b7d51dc7f2', name: 'Europa-Park',    match: null },
+  { id: '1f6f6a5e-61a7-4ad4-b89e-da9e6b2b3d79', name: 'Phantasialand',  match: null },
 ];
 
 const SCREEN_ORDER    = ['park'];
@@ -175,16 +174,22 @@ let scrTimer    = null;
 // ============================================================
 async function fetchPark(cfg) {
   try {
-    // Stap 1: haal children op om park-level entity ID te vinden
     const cr = await fetch(`https://api.themeparks.wiki/v1/entity/${cfg.id}/children`);
     if (!cr.ok) throw new Error(cr.status);
     const children = await cr.json();
 
-    // Zoek het child entity van type PARK (of gebruik de destination ID zelf als er geen children zijn)
-    const parkEntity = (children.children || []).find(c => c.entityType === 'PARK');
-    const parkId = parkEntity ? parkEntity.id : cfg.id;
+    const parkChildren = (children.children || []).filter(c => c.entityType === 'PARK');
 
-    // Stap 2: haal live data op voor dit specifieke park
+    let parkId;
+    if (parkChildren.length === 0) {
+      parkId = cfg.id;
+    } else if (cfg.match) {
+      const match = parkChildren.find(c => c.name.toLowerCase().includes(cfg.match.toLowerCase()));
+      parkId = match ? match.id : parkChildren[0].id;
+    } else {
+      parkId = parkChildren[0].id;
+    }
+
     const r = await fetch(`https://api.themeparks.wiki/v1/entity/${parkId}/live`);
     if (!r.ok) throw new Error(r.status);
     const json = await r.json();
