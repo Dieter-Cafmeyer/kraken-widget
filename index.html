@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///Users/dieter.cafmeyer/Downloads/kraken-widget_3.html -->
-<html lang="nl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NZXT Kraken Widget</title>
 <style>
@@ -9,84 +9,48 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html, body {
-    width: 480px;
-    height: 480px;
-    overflow: hidden;
-    background: #000;
-  }
+  html, body { width: 320px; height: 320px; overflow: hidden; background: #000; }
 
   #canvas {
-    width: 480px;
-    height: 480px;
-    border-radius: 50%;
-    position: relative;
-    overflow: hidden;
-    font-family: 'Inter', sans-serif;
-    background: #000;
+    width: 320px; height: 320px; border-radius: 50%;
+    position: relative; overflow: hidden;
+    font-family: 'Inter', sans-serif; background: #000;
   }
 
-  /* RGB spinning border ring */
-  #rgb-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    z-index: 0;
-  }
+  #rgb-ring { position: absolute; inset: 0; border-radius: 50%; z-index: 0; }
   #rgb-ring::before {
-    content: '';
-    position: absolute;
-    inset: -6px;
-    border-radius: 50%;
-    background: conic-gradient(
-      #ff0080 0deg, #ff4400 45deg, #ffff00 90deg, #00ff80 135deg,
-      #00ffff 180deg, #0080ff 225deg, #8000ff 270deg, #ff0080 360deg
-    );
+    content: ''; position: absolute; inset: -10px; border-radius: 50%;
+    background: conic-gradient(#ff0080 0deg,#ff4400 45deg,#ffff00 90deg,#00ff80 135deg,#00ffff 180deg,#0080ff 225deg,#8000ff 270deg,#ff0080 360deg);
     animation: spin 3s linear infinite;
   }
-  #rgb-ring::after {
-    content: '';
-    position: absolute;
-    inset: 12px;
-    border-radius: 50%;
-    background: #000;
-  }
+  #rgb-ring::after { content: ''; position: absolute; inset: 8px; border-radius: 50%; background: #000; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   #display {
-    position: absolute;
-    inset: 12px;
-    border-radius: 50%;
-    z-index: 2;
-    overflow: hidden;
+    position: absolute; inset: 8px; border-radius: 50%; z-index: 2; overflow: hidden;
     background: radial-gradient(circle at 50% 35%, #080820 0%, #020208 70%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
   }
   #display::after {
-    content: '';
-    position: absolute; inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,200,255,0.012) 3px, rgba(0,200,255,0.012) 4px);
-    pointer-events: none;
-    z-index: 50;
+    pointer-events: none; z-index: 50;
   }
 
   .grid {
     position: absolute; inset: 0;
     background-image: linear-gradient(rgba(0,200,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,255,0.035) 1px, transparent 1px);
-    background-size: 32px 32px;
+    background-size: 20px 20px;
     animation: gridpulse 5s ease-in-out infinite;
   }
   @keyframes gridpulse { 0%,100%{opacity:.4} 50%{opacity:1} }
 
-  .corner { position: absolute; width: 20px; height: 20px; }
-  .corner.tl { top:52px; left:82px; border-top:1px solid rgba(0,255,255,.35); border-left:1px solid rgba(0,255,255,.35); }
-  .corner.tr { top:52px; right:82px; border-top:1px solid rgba(0,255,255,.35); border-right:1px solid rgba(0,255,255,.35); }
-  .corner.bl { bottom:52px; left:82px; border-bottom:1px solid rgba(0,255,255,.35); border-left:1px solid rgba(0,255,255,.35); }
-  .corner.br { bottom:52px; right:82px; border-bottom:1px solid rgba(0,255,255,.35); border-right:1px solid rgba(0,255,255,.35); }
+  .corner { position: absolute; width: 12px; height: 12px; }
+  .corner.tl { top:34px; left:52px; border-top:1px solid rgba(0,255,255,.35); border-left:1px solid rgba(0,255,255,.35); }
+  .corner.tr { top:34px; right:52px; border-top:1px solid rgba(0,255,255,.35); border-right:1px solid rgba(0,255,255,.35); }
+  .corner.bl { bottom:34px; left:52px; border-bottom:1px solid rgba(0,255,255,.35); border-left:1px solid rgba(0,255,255,.35); }
+  .corner.br { bottom:34px; right:52px; border-bottom:1px solid rgba(0,255,255,.35); border-right:1px solid rgba(0,255,255,.35); }
 
-  /* ===== SCREENS ===== */
   .screen {
     position: absolute; inset: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -94,58 +58,34 @@
   }
   .screen.active { opacity: 1; }
 
-  /* ===== PARK ===== */
-  .park-tag { font-family:'DM Mono',monospace; font-size:12px; font-weight:400; letter-spacing:3px; color:rgba(0,255,255,.45); margin-bottom:5px; text-transform:uppercase; }
-  .park-name {
-    font-family:'Inter',sans-serif; font-size:26px; font-weight:700; text-align:center; color:#fff;
-    text-shadow:0 0 18px rgba(0,255,255,.9), 0 0 40px rgba(0,255,255,.35);
-    line-height:1.2; margin-bottom:12px; max-width:300px; letter-spacing:-.5px;
-  }
-
-  .rides { width:300px; margin-top:8px; }
-  .ride-row { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.06); }
-  .ride-n { font-family:'Inter',sans-serif; font-size:15px; font-weight:400; color:rgba(255,255,255,.6); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:225px; }
-  .ride-w { font-family:'DM Mono',monospace; font-size:16px; font-weight:500; min-width:42px; text-align:right; }
-
-  .c-green  { color:#00ff80; text-shadow:0 0 8px #00ff80; }
-  .c-yellow { color:#ffdd00; text-shadow:0 0 8px #ffdd00; }
-  .c-orange { color:#ff8800; text-shadow:0 0 8px #ff8800; }
-  .c-red    { color:#ff2244; text-shadow:0 0 8px #ff2244; }
-
   /* ===== SYS ===== */
-  .sys-title { font-family:'DM Mono',monospace; font-size:11px; font-weight:400; letter-spacing:4px; color:rgba(0,255,255,.35); margin-bottom:22px; }
-  .metric { width:285px; margin-bottom:18px; }
-  .metric-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
-  .m-label { font-family:'DM Mono',monospace; font-size:11px; font-weight:400; letter-spacing:2px; color:rgba(255,255,255,.35); }
-  .m-val { font-family:'Inter',sans-serif; font-size:38px; font-weight:600; line-height:1; letter-spacing:-1px; }
-  .m-unit { font-family:'DM Mono',monospace; font-size:14px; font-weight:300; opacity:.6; margin-left:3px; }
+  .sys-title { font-family:'DM Mono',monospace; font-size:15px; font-weight:400; letter-spacing:4px; color:rgba(0,255,255,.35); margin-bottom:16px; }
+  .metric { width:200px; margin-bottom:14px; }
+  .metric-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px; }
+  .m-label { font-family:'DM Mono',monospace; font-size:15px; font-weight:400; letter-spacing:2px; color:rgba(255,255,255,.35); }
+  .m-val { font-family:'Inter',sans-serif; font-size:30px; font-weight:600; line-height:1; letter-spacing:-1px; }
+  .m-unit { font-family:'DM Mono',monospace; font-size:12px; font-weight:300; opacity:.6; margin-left:2px; }
   .bar-track { height:4px; background:rgba(255,255,255,.07); border-radius:2px; overflow:hidden; }
   .bar-fill { height:100%; border-radius:2px; transition:width 1s ease; position:relative; }
-  .bar-fill::after { content:''; position:absolute; right:0; top:0; bottom:0; width:8px; background:rgba(255,255,255,.7); border-radius:2px; filter:blur(2px); }
-  .cpu-c { color:#00ffff; text-shadow:0 0 20px rgba(0,255,255,.9); }
-  .gpu-c { color:#cc00ff; text-shadow:0 0 20px rgba(200,0,255,.9); }
+  .bar-fill::after { content:''; position:absolute; right:0; top:0; bottom:0; width:6px; background:rgba(255,255,255,.7); border-radius:2px; filter:blur(2px); }
+  .cpu-c { color:#00ffff; text-shadow:0 0 16px rgba(0,255,255,.9); }
+  .gpu-c { color:#cc00ff; text-shadow:0 0 16px rgba(200,0,255,.9); }
   .cpu-bar { background:linear-gradient(90deg,#0055ff,#00ffff); }
   .gpu-bar { background:linear-gradient(90deg,#7700ff,#ff00ee); }
-  .pump-row { display:flex; align-items:center; gap:12px; margin-top:12px; }
-  .pump-ico { font-size:20px; color:rgba(0,255,255,.5); animation:spin 2.5s linear infinite; display:inline-block; line-height:1; }
-  .pump-lbl { font-family:'DM Mono',monospace; font-size:10px; font-weight:300; color:rgba(255,255,255,.3); letter-spacing:2px; }
-  .pump-rpm { font-family:'DM Mono',monospace; font-size:22px; font-weight:500; color:rgba(0,255,255,.8); }
+  .pump-row { display:flex; align-items:center; gap:10px; margin-top:10px; }
+  .pump-ico { font-size:16px; color:rgba(0,255,255,.5); animation:spin 2.5s linear infinite; display:inline-block; line-height:1; }
+  .pump-lbl { font-family:'DM Mono',monospace; font-size:9px; font-weight:300; color:rgba(255,255,255,.3); letter-spacing:2px; }
+  .pump-rpm { font-family:'DM Mono',monospace; font-size:17px; font-weight:500; color:rgba(0,255,255,.8); }
 
   /* ===== CLOCK ===== */
-  .clock-time { font-family:'Inter',sans-serif; font-size:76px; font-weight:700; color:#fff; text-shadow:0 0 30px rgba(0,255,255,1), 0 0 70px rgba(0,255,255,.4); letter-spacing:-2px; line-height:1; }
+  .clock-time { font-family:'Inter',sans-serif; font-size:52px; font-weight:700; color:#fff; text-shadow:0 0 24px rgba(0,255,255,1), 0 0 50px rgba(0,255,255,.4); letter-spacing:-1px; line-height:1; }
   .blink { animation:blink 1s step-end infinite; }
   @keyframes blink { 50%{opacity:0} }
-  .clock-date { font-family:'DM Mono',monospace; font-size:14px; font-weight:400; color:rgba(0,255,255,.5); letter-spacing:3px; margin-top:14px; }
-  .deco { display:flex; align-items:center; gap:10px; margin-top:22px; width:230px; }
+  .clock-date { font-family:'DM Mono',monospace; font-size:11px; font-weight:400; color:rgba(0,255,255,.5); letter-spacing:3px; margin-top:10px; }
+  .deco { display:flex; align-items:center; gap:8px; margin-top:16px; width:160px; }
   .deco-l { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(0,255,255,.4)); }
   .deco-r { flex:1; height:1px; background:linear-gradient(90deg,rgba(0,255,255,.4),transparent); }
-  .deco-d { width:6px; height:6px; border:1px solid rgba(0,255,255,.5); transform:rotate(45deg); box-shadow:0 0 6px rgba(0,255,255,.4); }
-
-  /* ===== LOADING ===== */
-  #loading { position:absolute; inset:0; border-radius:50%; background:#000; z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity .8s; }
-  .load-brand { font-family:'Inter',sans-serif; font-size:13px; font-weight:600; letter-spacing:8px; color:rgba(0,255,255,.5); margin-bottom:22px; }
-  .load-spin { width:44px; height:44px; border:2px solid rgba(0,255,255,.1); border-top-color:#00ffff; border-radius:50%; animation:spin .8s linear infinite; }
-  .load-txt { margin-top:14px; font-family:'DM Mono',monospace; font-size:10px; font-weight:400; color:rgba(0,255,255,.4); letter-spacing:3px; }
+  .deco-d { width:5px; height:5px; border:1px solid rgba(0,255,255,.5); transform:rotate(45deg); box-shadow:0 0 5px rgba(0,255,255,.4); }
 </style>
 </head>
 <body>
@@ -156,40 +96,27 @@
     <div class="corner tl"></div><div class="corner tr"></div>
     <div class="corner bl"></div><div class="corner br"></div>
 
-    <div id="loading" style="opacity: 0; display: none;">
-      <div class="load-brand">NZXT</div>
-      <div class="load-spin"></div>
-      <div class="load-txt">OPHALEN...</div>
-    </div>
-
-    <!-- PARK -->
-    <div class="screen active" id="s-park">
-      <div class="park-tag">WACHTTIJDEN • LIVE</div>
-      <div class="park-name" id="park-name">Disneyland Paris<br>Walt Disney Studios</div>
-      <div class="rides" id="rides-list"><div class="ride-row"><span class="ride-n">Crush's Coaster</span><span class="ride-w c-red">90'</span></div><div class="ride-row"><span class="ride-n">The Twilight Zone Tower of Terror</span><span class="ride-w c-red">65'</span></div><div class="ride-row"><span class="ride-n">Spider-Man W.E.B. Adventure</span><span class="ride-w c-orange">60'</span></div><div class="ride-row"><span class="ride-n">RC Racer</span><span class="ride-w c-orange">55'</span></div><div class="ride-row"><span class="ride-n">Toy Soldiers Parachute Drop</span><span class="ride-w c-orange">45'</span></div></div>
-    </div>
-
     <!-- SYS -->
-    <div class="screen" id="s-sys">
-      <div class="sys-title">SYSTEEM • LIVE</div>
+    <div class="screen active" id="s-sys">
+      <div class="sys-title">SYSTEEM</div>
       <div class="metric">
-        <div class="metric-top"><span class="m-label">CPU GEBRUIK</span><span class="m-val cpu-c" id="cpu-load">26<span class="m-unit">%</span></span></div>
-        <div class="bar-track"><div class="bar-fill cpu-bar" id="cpu-load-bar" style="width: 26.2843%;"></div></div>
+        <div class="metric-top"><span class="m-label">CPU GEBRUIK</span><span class="m-val cpu-c" id="cpu-load">—<span class="m-unit">%</span></span></div>
+        <div class="bar-track"><div class="bar-fill cpu-bar" id="cpu-load-bar" style="width:0%"></div></div>
       </div>
       <div class="metric">
-        <div class="metric-top"><span class="m-label">GPU GEBRUIK</span><span class="m-val gpu-c" id="gpu-load">25<span class="m-unit">%</span></span></div>
-        <div class="bar-track"><div class="bar-fill gpu-bar" id="gpu-load-bar" style="width: 25.295%;"></div></div>
+        <div class="metric-top"><span class="m-label">GPU GEBRUIK</span><span class="m-val gpu-c" id="gpu-load">—<span class="m-unit">%</span></span></div>
+        <div class="bar-track"><div class="bar-fill gpu-bar" id="gpu-load-bar" style="width:0%"></div></div>
       </div>
       <div class="pump-row">
         <span class="pump-ico">⟳</span>
-        <div><div class="pump-lbl">POMP RPM</div><div class="pump-rpm" id="pump-rpm">2505 RPM</div></div>
+        <div><div class="pump-lbl">POMP RPM</div><div class="pump-rpm" id="pump-rpm">— RPM</div></div>
       </div>
     </div>
 
     <!-- CLOCK -->
     <div class="screen" id="s-clock">
-      <div class="clock-time"><span id="ch">15</span><span class="blink">:</span><span id="cm">15</span><span class="blink">:</span><span id="cs">04</span></div>
-      <div class="clock-date" id="cdate">ZO 22 MAR 2026</div>
+      <div class="clock-time"><span id="ch">00</span><span class="blink">:</span><span id="cm">00</span><span class="blink">:</span><span id="cs">00</span></div>
+      <div class="clock-date" id="cdate"></div>
       <div class="deco"><div class="deco-l"></div><div class="deco-d"></div><div class="deco-r"></div></div>
     </div>
 
@@ -197,25 +124,11 @@
 </div>
 
 <script>
-// ============================================================
-// CONFIG — themeparks.wiki API
-// ============================================================
-const PARKS = [
-  { id: 'dae968d5-630d-44a5-ad08-a3f7d5af6a95', name: 'Disneyland Paris\nMagic Kingdom'       },
-  { id: 'ca888437-ebb4-4d50-aed2-d227f7096968', name: 'Disneyland Paris\nWalt Disney Studios'  },
-  { id: 'e8d0207f-da8a-4048-bec8-117aa946b2c2', name: 'Efteling'      },
-  { id: '63cf2fd0-cd01-4f6b-9ad3-48b7d51dc7f2', name: 'Europa-Park'   },
-  { id: '1f6f6a5e-61a7-4ad4-b89e-da9e6b2b3d79', name: 'Phantasialand' },
-];
+const SCREEN_ORDER    = ['sys', 'clock'];
+const SCREEN_DURATION = { sys: 7000, clock: 4000 };
 
-const SCREEN_ORDER    = ['park', 'sys', 'clock'];
-const SCREEN_DURATION = { park: 9000, sys: 5500, clock: 4500 };
-const PARK_REFRESH    = 120000;
-
-let parksData   = [];
-let currentPark = 0;
-let currentScr  = 0;
-let scrTimer    = null;
+let currentScr = 0;
+let scrTimer   = null;
 
 // ============================================================
 // CLOCK
@@ -238,20 +151,23 @@ tickClock();
 // ============================================================
 window.nzxt = window.nzxt || { v1: {} };
 
-function applyTempColor(el, temp, baseClass) {
-  el.className = 'm-val ' + baseClass;
-  if      (temp < 55) el.style.color = '#00ff80', el.style.textShadow = '0 0 20px rgba(0,255,128,.9)';
-  else if (temp < 70) el.style.color = '#ffdd00', el.style.textShadow = '0 0 20px rgba(255,220,0,.9)';
-  else if (temp < 82) el.style.color = '#ff8800', el.style.textShadow = '0 0 20px rgba(255,136,0,.9)';
-  else                el.style.color = '#ff2244', el.style.textShadow = '0 0 20px rgba(255,34,68,.9)';
-}
-
 function setCPU(temp, load) {
-  document.getElementById('cpu-load').innerHTML = Math.round(load) + '<span class="m-unit">%</span>';
+  const el = document.getElementById('cpu-load');
+  el.innerHTML = Math.round(load) + '<span class="m-unit">%</span>';
+  if      (temp < 55) el.style.color = '#00ff80', el.style.textShadow = '0 0 16px rgba(0,255,128,.9)';
+  else if (temp < 70) el.style.color = '#ffdd00', el.style.textShadow = '0 0 16px rgba(255,220,0,.9)';
+  else if (temp < 82) el.style.color = '#ff8800', el.style.textShadow = '0 0 16px rgba(255,136,0,.9)';
+  else                el.style.color = '#ff2244', el.style.textShadow = '0 0 16px rgba(255,34,68,.9)';
   document.getElementById('cpu-load-bar').style.width = Math.min(load,100)+'%';
 }
+
 function setGPU(temp, load) {
-  document.getElementById('gpu-load').innerHTML = Math.round(load) + '<span class="m-unit">%</span>';
+  const el = document.getElementById('gpu-load');
+  el.innerHTML = Math.round(load) + '<span class="m-unit">%</span>';
+  if      (temp < 55) el.style.color = '#00ff80', el.style.textShadow = '0 0 16px rgba(0,255,128,.9)';
+  else if (temp < 70) el.style.color = '#ffdd00', el.style.textShadow = '0 0 16px rgba(255,220,0,.9)';
+  else if (temp < 82) el.style.color = '#ff8800', el.style.textShadow = '0 0 16px rgba(255,136,0,.9)';
+  else                el.style.color = '#ff2244', el.style.textShadow = '0 0 16px rgba(255,34,68,.9)';
   document.getElementById('gpu-load-bar').style.width = Math.min(load,100)+'%';
 }
 
@@ -262,7 +178,8 @@ window.nzxt.v1.onMonitoringDataUpdate = (data) => {
   if (kraken)    document.getElementById('pump-rpm').textContent = Math.round(kraken.pumpSpeed||0) + ' RPM';
 };
 
-function demoMonitor() {
+// Demo fallback wanneer geen NZXT CAM
+(function demoMonitor() {
   let ct=54, gt=62;
   setInterval(() => {
     ct = Math.max(34, Math.min(95, ct+(Math.random()-.47)*2.5));
@@ -271,82 +188,7 @@ function demoMonitor() {
     setGPU(gt, 25+Math.random()*65);
     document.getElementById('pump-rpm').textContent = Math.round(2100+Math.random()*500) + ' RPM';
   }, 2000);
-}
-
-// ============================================================
-// PARKS — themeparks.wiki
-// ============================================================
-async function fetchPark(cfg) {
-  try {
-    const r = await fetch(`https://api.themeparks.wiki/v1/entity/${cfg.id}/live`);
-    if (!r.ok) throw new Error(r.status);
-    const json = await r.json();
-
-    const rides = (json.liveData || [])
-      .filter(e =>
-        e.entityType === 'ATTRACTION' &&
-        e.status !== 'CLOSED' &&
-        e.status !== 'REFURBISHMENT' &&
-        e.queue?.STANDBY?.waitTime != null &&
-        e.queue.STANDBY.waitTime >= 0
-      )
-      .map(e => ({ name: e.name, wait: e.queue.STANDBY.waitTime }))
-      .sort((a, b) => b.wait - a.wait);
-
-    if (rides.length === 0) return { name: cfg.name, rides: [], closed: true };
-    return { name: cfg.name, rides };
-  } catch(e) {
-    console.warn('Fout bij ophalen park:', cfg.name, e);
-    return { name: cfg.name, rides: [], error: true };
-  }
-}
-
-async function loadParks() {
-  const results = await Promise.all(PARKS.map(fetchPark));
-  const validParks = results.filter(p => !p.error);
-
-  if (validParks.length > 0) {
-    parksData = validParks;
-    if (currentPark >= parksData.length) currentPark = 0;
-  } else {
-    parksData = [{ name: 'ALLE PARKEN\nGESLOTEN', rides: [], closed: true }];
-    currentPark = 0;
-  }
-  renderPark(currentPark);
-}
-
-function waitColor(w) {
-  if (w<20) return 'c-green';
-  if (w<40) return 'c-yellow';
-  if (w<65) return 'c-orange';
-  return 'c-red';
-}
-
-function renderPark(idx) {
-  if (!parksData.length) return;
-  currentPark = ((idx%parksData.length)+parksData.length)%parksData.length;
-  const p = parksData[currentPark];
-
-  document.getElementById('park-name').innerHTML = p.name.replace('\n','<br>');
-
-  const list = document.getElementById('rides-list');
-  list.innerHTML = '';
-
-  if (p.closed) {
-    const row = document.createElement('div');
-    row.style.cssText = 'font-family:"DM Mono",monospace;font-size:13px;color:rgba(0,255,255,.3);text-align:center;padding:24px 0;letter-spacing:3px;';
-    row.textContent = 'GESLOTEN';
-    list.appendChild(row);
-    return;
-  }
-
-  p.rides.slice(0,5).forEach(r => {
-    const row = document.createElement('div');
-    row.className = 'ride-row';
-    row.innerHTML = `<span class="ride-n">${r.name}</span><span class="ride-w ${waitColor(r.wait)}">${r.wait}'</span>`;
-    list.appendChild(row);
-  });
-}
+})();
 
 // ============================================================
 // SCREEN ROTATION
@@ -357,35 +199,15 @@ function showScreen(name) {
 }
 
 function nextScreen() {
-  currentScr = (currentScr+1)%SCREEN_ORDER.length;
+  currentScr = (currentScr+1) % SCREEN_ORDER.length;
   const name = SCREEN_ORDER[currentScr];
   showScreen(name);
-  if (name==='park') {
-    currentPark = (currentPark+1)%Math.max(parksData.length,1);
-    renderPark(currentPark);
-  }
   clearTimeout(scrTimer);
   scrTimer = setTimeout(nextScreen, SCREEN_DURATION[name]);
 }
 
-// ============================================================
-// INIT
-// ============================================================
-async function init() {
-  demoMonitor();
-  await loadParks();
-
-  const ld = document.getElementById('loading');
-  ld.style.opacity='0';
-  setTimeout(()=>ld.style.display='none', 800);
-
-  showScreen('park');
-  scrTimer = setTimeout(nextScreen, SCREEN_DURATION['park']);
-  setInterval(loadParks, PARK_REFRESH);
-}
-
-init();
+showScreen('sys');
+scrTimer = setTimeout(nextScreen, SCREEN_DURATION['sys']);
 </script>
-
-
-</body></html>
+</body>
+</html>
