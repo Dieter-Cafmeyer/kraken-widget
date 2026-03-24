@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0071)file:///Users/dieter.cafmeyer/Downloads/kraken-widget-parks-only_1.html -->
+<!-- saved from url=(0063)file:///C:/Users/Dieter/Downloads/kraken-widget-parks-only.html -->
 <html lang="nl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,25 +8,25 @@
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=DM+Mono:wght@300;400;500&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 480px; height: 480px; overflow: hidden; background: #000; }
+  html, body { width: 320px; height: 320px; overflow: hidden; background: #000; }
 
   #canvas {
-    width: 480px; height: 480px; border-radius: 50%;
+    width: 320px; height: 320px; border-radius: 50%;
     position: relative; overflow: hidden;
     font-family: 'Inter', sans-serif; background: #000;
   }
 
   #rgb-ring { position: absolute; inset: 0; border-radius: 50%; z-index: 0; }
   #rgb-ring::before {
-    content: ''; position: absolute; inset: -6px; border-radius: 50%;
+    content: ''; position: absolute; inset: -4px; border-radius: 50%;
     background: conic-gradient(#ff0080 0deg,#ff4400 45deg,#ffff00 90deg,#00ff80 135deg,#00ffff 180deg,#0080ff 225deg,#8000ff 270deg,#ff0080 360deg);
     animation: spin 3s linear infinite;
   }
-  #rgb-ring::after { content: ''; position: absolute; inset: 12px; border-radius: 50%; background: #000; }
+  #rgb-ring::after { content: ''; position: absolute; inset: 8px; border-radius: 50%; background: #000; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   #display {
-    position: absolute; inset: 12px; border-radius: 50%; z-index: 2; overflow: hidden;
+    position: absolute; inset: 8px; border-radius: 50%; z-index: 2; overflow: hidden;
     background: radial-gradient(circle at 50% 35%, #080820 0%, #020208 70%);
     display: flex; align-items: center; justify-content: center;
   }
@@ -39,16 +39,16 @@
   .grid {
     position: absolute; inset: 0;
     background-image: linear-gradient(rgba(0,200,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,255,0.035) 1px, transparent 1px);
-    background-size: 32px 32px;
+    background-size: 20px 20px;
     animation: gridpulse 5s ease-in-out infinite;
   }
   @keyframes gridpulse { 0%,100%{opacity:.4} 50%{opacity:1} }
 
-  .corner { position: absolute; width: 20px; height: 20px; }
-  .corner.tl { top:52px; left:82px; border-top:1px solid rgba(0,255,255,.35); border-left:1px solid rgba(0,255,255,.35); }
-  .corner.tr { top:52px; right:82px; border-top:1px solid rgba(0,255,255,.35); border-right:1px solid rgba(0,255,255,.35); }
-  .corner.bl { bottom:52px; left:82px; border-bottom:1px solid rgba(0,255,255,.35); border-left:1px solid rgba(0,255,255,.35); }
-  .corner.br { bottom:52px; right:82px; border-bottom:1px solid rgba(0,255,255,.35); border-right:1px solid rgba(0,255,255,.35); }
+  .corner { position: absolute; width: 12px; height: 12px; }
+  .corner.tl { top:34px; left:52px; border-top:1px solid rgba(0,255,255,.35); border-left:1px solid rgba(0,255,255,.35); }
+  .corner.tr { top:34px; right:52px; border-top:1px solid rgba(0,255,255,.35); border-right:1px solid rgba(0,255,255,.35); }
+  .corner.bl { bottom:34px; left:52px; border-bottom:1px solid rgba(0,255,255,.35); border-left:1px solid rgba(0,255,255,.35); }
+  .corner.br { bottom:34px; right:52px; border-bottom:1px solid rgba(0,255,255,.35); border-right:1px solid rgba(0,255,255,.35); }
 
   /* ===== SCREENS ===== */
   .screen {
@@ -59,54 +59,45 @@
   .screen.active { opacity: 1; }
 
   /* ===== PARK SCHERM ===== */
-  .park-tag { font-family:'DM Mono',monospace; font-size:12px; font-weight:400; letter-spacing:3px; color:rgba(0,255,255,.45); margin-bottom:5px; }
+  .park-tag { font-family:'DM Mono',monospace; font-size:8px; font-weight:400; letter-spacing:2px; color:rgba(0,255,255,.45); margin-bottom:3px; }
   .park-name {
-    font-family:'Inter',sans-serif; font-size:26px; font-weight:700; text-align:center; color:#fff;
-    text-shadow:0 0 18px rgba(0,255,255,.9), 0 0 40px rgba(0,255,255,.35);
-    line-height:1.2; margin-bottom:12px; max-width:300px; letter-spacing:-.5px;
+    font-family:'Inter',sans-serif; font-size:16px; font-weight:700; text-align:center; color:#fff;
+    text-shadow:0 0 12px rgba(0,255,255,.9), 0 0 25px rgba(0,255,255,.35);
+    line-height:1.2; margin-bottom:6px; max-width:195px; letter-spacing:-.3px;
   }
-  .rides { width:300px; margin-top:4px; }
-  .ride-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.06); }
-  .ride-n { font-family:'Inter',sans-serif; font-size:15px; font-weight:400; color:rgba(255,255,255,.6); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:225px; }
-  .ride-w { font-family:'DM Mono',monospace; font-size:16px; font-weight:500; min-width:42px; text-align:right; }
-  .c-green  { color:#00ff80; text-shadow:0 0 8px #00ff80; }
-  .c-yellow { color:#ffdd00; text-shadow:0 0 8px #ffdd00; }
-  .c-orange { color:#ff8800; text-shadow:0 0 8px #ff8800; }
-  .c-red    { color:#ff2244; text-shadow:0 0 8px #ff2244; }
+  .rides { width:195px; margin-top:2px; }
+  .ride-row { display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+  .ride-n { font-family:'Inter',sans-serif; font-size:10px; font-weight:400; color:rgba(255,255,255,.65); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:145px; }
+  .ride-w { font-family:'DM Mono',monospace; font-size:11px; font-weight:500; min-width:26px; text-align:right; }
+  .c-green  { color:#00ff80; text-shadow:0 0 6px #00ff80; }
+  .c-yellow { color:#ffdd00; text-shadow:0 0 6px #ffdd00; }
+  .c-orange { color:#ff8800; text-shadow:0 0 6px #ff8800; }
+  .c-red    { color:#ff2244; text-shadow:0 0 6px #ff2244; }
 
   /* ===== DRUKTE + WEER SCHERM ===== */
   .info-park-name {
-    font-family:'Inter',sans-serif; font-size:22px; font-weight:700; text-align:center; color:#fff;
-    text-shadow:0 0 18px rgba(0,255,255,.9); line-height:1.2; margin-bottom:22px; letter-spacing:-.5px;
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:700; text-align:center; color:#fff;
+    text-shadow:0 0 12px rgba(0,255,255,.9); line-height:1.2; margin-bottom:10px; letter-spacing:-.3px;
   }
-
-  /* Drukte meter */
-  .crowd-label { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:3px; color:rgba(0,255,255,.4); margin-bottom:10px; }
-  .crowd-bar-wrap { width:260px; margin-bottom:6px; }
-  .crowd-track { height:8px; background:rgba(255,255,255,.07); border-radius:4px; overflow:hidden; }
-  .crowd-fill {
-    height:100%; border-radius:4px;
-    transition: width 1.2s cubic-bezier(.4,0,.2,1), background 1s;
-  }
-  .crowd-text { font-family:'Inter',sans-serif; font-size:28px; font-weight:700; margin-top:6px; letter-spacing:-.5px; }
-  .crowd-sub  { font-family:'DM Mono',monospace; font-size:10px; color:rgba(255,255,255,.3); letter-spacing:2px; margin-top:2px; }
-
-  /* Divider */
-  .divider { width:240px; height:1px; background:rgba(255,255,255,.07); margin:18px 0; }
-
-  /* Weer */
-  .weather-row { display:flex; align-items:center; gap:16px; }
-  .weather-icon { font-size:42px; line-height:1; }
-  .weather-info { display:flex; flex-direction:column; gap:4px; }
-  .weather-temp { font-family:'Inter',sans-serif; font-size:38px; font-weight:700; color:#fff; letter-spacing:-1px; line-height:1; }
-  .weather-desc { font-family:'DM Mono',monospace; font-size:11px; color:rgba(0,255,255,.5); letter-spacing:2px; }
-  .weather-extra { font-family:'DM Mono',monospace; font-size:10px; color:rgba(255,255,255,.3); letter-spacing:1px; }
+  .crowd-label { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:2px; color:rgba(0,255,255,.4); margin-bottom:5px; }
+  .crowd-bar-wrap { width:175px; margin-bottom:4px; }
+  .crowd-track { height:5px; background:rgba(255,255,255,.07); border-radius:3px; overflow:hidden; }
+  .crowd-fill { height:100%; border-radius:3px; transition: width 1.2s cubic-bezier(.4,0,.2,1), background 1s; }
+  .crowd-text { font-family:'Inter',sans-serif; font-size:22px; font-weight:700; margin-top:4px; letter-spacing:-.3px; }
+  .crowd-sub  { font-family:'DM Mono',monospace; font-size:8px; color:rgba(255,255,255,.3); letter-spacing:1px; margin-top:1px; }
+  .divider { width:175px; height:1px; background:rgba(255,255,255,.07); margin:10px 0; }
+  .weather-row { display:flex; align-items:center; gap:10px; }
+  .weather-icon { font-size:30px; line-height:1; }
+  .weather-info { display:flex; flex-direction:column; gap:2px; }
+  .weather-temp { font-family:'Inter',sans-serif; font-size:28px; font-weight:700; color:#fff; letter-spacing:-1px; line-height:1; }
+  .weather-desc { font-family:'DM Mono',monospace; font-size:8px; color:rgba(0,255,255,.5); letter-spacing:1px; }
+  .weather-extra { font-family:'DM Mono',monospace; font-size:8px; color:rgba(255,255,255,.3); }
 
   /* ===== LOADING ===== */
   #loading { position:absolute; inset:0; border-radius:50%; background:#000; z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity .8s; }
-  .load-brand { font-family:'Inter',sans-serif; font-size:13px; font-weight:600; letter-spacing:8px; color:rgba(0,255,255,.5); margin-bottom:22px; }
-  .load-spin { width:44px; height:44px; border:2px solid rgba(0,255,255,.1); border-top-color:#00ffff; border-radius:50%; animation:spin .8s linear infinite; }
-  .load-txt { margin-top:14px; font-family:'DM Mono',monospace; font-size:10px; color:rgba(0,255,255,.4); letter-spacing:3px; }
+  .load-brand { font-family:'Inter',sans-serif; font-size:10px; font-weight:600; letter-spacing:6px; color:rgba(0,255,255,.5); margin-bottom:14px; }
+  .load-spin { width:30px; height:30px; border:2px solid rgba(0,255,255,.1); border-top-color:#00ffff; border-radius:50%; animation:spin .8s linear infinite; }
+  .load-txt { margin-top:10px; font-family:'DM Mono',monospace; font-size:8px; color:rgba(0,255,255,.4); letter-spacing:3px; }
 </style>
 </head>
 <body>
@@ -126,26 +117,26 @@
     <!-- PARK: wachttijden -->
     <div class="screen" id="s-park">
       <div class="park-tag">WACHTTIJDEN • LIVE</div>
-      <div class="park-name" id="park-name">Parc Astérix</div>
+      <div class="park-name" id="park-name">Disney Adventure World</div>
       <div class="rides" id="rides-list"><div style="font-family: &quot;DM Mono&quot;, monospace; font-size: 13px; color: rgba(0, 255, 255, 0.3); text-align: center; padding: 24px 0px; letter-spacing: 3px;">GESLOTEN</div></div>
     </div>
 
     <!-- INFO: drukte + weer -->
     <div class="screen active" id="s-info">
-      <div class="info-park-name" id="info-park-name">Parc Astérix</div>
+      <div class="info-park-name" id="info-park-name">Disney Adventure World</div>
       <div class="crowd-label">DRUKTE</div>
       <div class="crowd-bar-wrap">
-        <div class="crowd-track"><div class="crowd-fill" id="crowd-fill" style="width: 0%; background: linear-gradient(90deg, rgba(255, 221, 0, 0.533), rgb(255, 221, 0)); box-shadow: rgba(255, 221, 0, 0.533) 0px 0px 12px;"></div></div>
+        <div class="crowd-track"><div class="crowd-fill" id="crowd-fill" style="width: 0%; background: linear-gradient(90deg, rgba(0, 255, 255, 0.533), rgb(0, 255, 255)); box-shadow: rgba(0, 255, 255, 0.533) 0px 0px 12px;"></div></div>
       </div>
       <div class="crowd-text" id="crowd-text" style="color: rgba(255, 255, 255, 0.3); text-shadow: rgba(255, 255, 255, 0.3) 0px 0px 20px;">ONBEKEND</div>
       <div class="crowd-sub" id="crowd-sub"></div>
       <div class="divider"></div>
       <div class="weather-row">
-        <div class="weather-icon" id="wx-icon">⛅</div>
+        <div class="weather-icon" id="wx-icon">☁️</div>
         <div class="weather-info">
-          <div class="weather-temp" id="wx-temp">15°C</div>
-          <div class="weather-desc" id="wx-desc">HALF BEWOLKT</div>
-          <div class="weather-extra" id="wx-extra">💨 13 km/u  🌧 0 mm</div>
+          <div class="weather-temp" id="wx-temp">13°C</div>
+          <div class="weather-desc" id="wx-desc">BEWOLKT</div>
+          <div class="weather-extra" id="wx-extra">💨 19 km/u  🌧 0 mm</div>
         </div>
       </div>
     </div>
