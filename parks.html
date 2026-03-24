@@ -54,6 +54,7 @@
   .screen {
     position: absolute; inset: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding-bottom: 10px;
     opacity: 0; transition: opacity .7s ease; pointer-events: none;
   }
   .screen.active { opacity: 1; }
@@ -61,9 +62,9 @@
   /* ===== PARK SCHERM ===== */
   .park-tag { font-family:'DM Mono',monospace; font-size:10px; font-weight:400; letter-spacing:2px; color:rgba(0,255,255,.45); margin-bottom:4px;display: none; }
   .park-name {
-    font-family:'Inter',sans-serif; font-size:25px; font-weight:700; text-align:center; color:#fff;
+    font-family:'Inter',sans-serif; font-size:22px; font-weight:700; text-align:center; color:#fff;
     text-shadow:0 0 12px rgba(0,255,255,.9), 0 0 25px rgba(0,255,255,.35);
-    line-height:1.2; margin-bottom:8px; max-width:210px; letter-spacing:-.3px;
+    line-height:1.2; margin-bottom:8px; max-width:190px; letter-spacing:-.3px;
   }
   .rides { width:210px; margin-top:2px; }
   .ride-row { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid rgba(255,255,255,.06); }
@@ -76,21 +77,22 @@
 
   /* ===== DRUKTE + WEER SCHERM ===== */
   .info-park-name {
-    font-family:'Inter',sans-serif; font-size:25px; font-weight:700; text-align:center; color:#fff;
+    font-family:'Inter',sans-serif; font-size:22px; font-weight:700; text-align:center; color:#fff;
     text-shadow:0 0 12px rgba(0,255,255,.9); line-height:1.2; margin-bottom:10px; letter-spacing:-.3px;
+    max-width: 190px;
   }
   .crowd-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px; color:rgba(0,255,255,.4); margin-bottom:5px;display: none; }
   .crowd-bar-wrap { width:185px; margin-bottom:4px; }
   .crowd-track { height:6px; background:rgba(255,255,255,.07); border-radius:3px; overflow:hidden; }
   .crowd-fill { height:100%; border-radius:3px; transition: width 1.2s cubic-bezier(.4,0,.2,1), background 1s; }
   .crowd-text { font-family:'Inter',sans-serif; font-size:26px; font-weight:700; margin-top:4px; letter-spacing:-.3px; }
-  .crowd-sub  { font-family:'DM Mono',monospace; font-size:15px; color:rgba(255,255,255,.35); letter-spacing:1px; margin-top:2px;display: none; }
+  .crowd-sub  { font-family:'DM Mono',sans-serif; font-size:18px; color:rgba(255,255,255,.35); letter-spacing:1px; margin-top:2px; }
   .divider { width:185px; height:1px; background:rgba(255,255,255,.07); margin:10px 0; }
   .weather-row { display:flex; align-items:center; gap:12px; }
   .weather-icon { font-size:34px; line-height:1; }
   .weather-info { display:flex; flex-direction:column; gap:3px; }
   .weather-temp { font-family:'Inter',sans-serif; font-size:32px; font-weight:700; color:#fff; letter-spacing:-1px; line-height:1; }
-  .weather-desc { font-family:'DM Mono',monospace; font-size:15px; color:rgba(0,255,255,.5); letter-spacing:1px; }
+  .weather-desc { font-family:'DM Mono',monospace; font-size:13px; color:rgba(0,255,255,.5); letter-spacing:1px; }
   .weather-extra { font-family:'DM Mono',monospace; font-size:9px; color:rgba(255,255,255,.35);display: none; }
 
   /* ===== LOADING ===== */
@@ -149,12 +151,12 @@
 // CONFIG
 // ============================================================
 const PARKS = [
-  { id: 'dae968d5-630d-4719-8b06-3d107e944401', name: 'Disneyland Park',       lat: 48.8722, lon: 2.7760 },
+  { id: 'dae968d5-630d-4719-8b06-3d107e944401', name: 'Disneyland Paris',       lat: 48.8722, lon: 2.7760 },
   { id: 'ca888437-ebb4-4d50-aed2-d227f7096968', name: 'Disney Adventure World', lat: 48.8722, lon: 2.7760 },
   { id: '30713cf6-69a9-47c9-a505-52bb965f01be', name: 'Efteling',               lat: 51.6503, lon: 5.0481 },
   { id: 'abb67808-61e3-49ef-996c-1b97ed64fac6', name: 'Phantasialand',          lat: 50.7989, lon: 6.8794 },
-  { id: '9e938687-fd99-46f3-986a-1878210378f8', name: 'Parc Astérix',           lat: 49.1341, lon: 2.5712 },
-  { id: 'f0ea9b9c-1ccb-4860-bfe6-b5aea7e4db2b', name: 'Plopsaland Belgium',     lat: 51.0797, lon: 2.5969 },
+  { id: '75ea578a-adc8-4116-a54d-dccb60765ef9', name: 'Magic Kingdom',     lat: 28.4188, lon: -81.5812 },
+  { id: '7340550b-c14d-4def-80bb-acdb51d49a66', name: 'Disneyland Anaheim',     lat: 33.8121, lon: -117.9190 },
 ];
 
 // Rotatie: park → info → volgend park → info → ...
@@ -270,7 +272,7 @@ function waitColor(w) {
 
 function renderPark(idx) {
   if (!parksData.length) return;
-  const p = parksData[idx];
+  const p = parksData[idx];  
   document.getElementById('park-name').innerHTML = p.name.replace('\n','<br>');
 
   const list = document.getElementById('rides-list');
@@ -340,6 +342,12 @@ function tick() {
   } else {
     // Ga naar volgend park
     currentPark = (currentPark + 1) % Math.max(parksData.length, 1);
+    console.log(parksData);
+
+    while (parksData[currentPark]?.closed) {
+      currentPark = (currentPark + 1) % Math.max(parksData.length, 1);
+    }
+    
     phase = 'park';
     renderPark(currentPark);
     showScreen('s-park');
